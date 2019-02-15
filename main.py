@@ -10,7 +10,22 @@ import constants
 DEFAULT_SHAPE = (-1, constants.im_size)
 params.num_epochs = 10
 
-def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=None, batch_size=params.batch_size, data=data.train, print_every=1000):
+def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=None, data=data.train, print_every=1000):
+    """
+    Train a neural model on `data`.
+
+    :param model: an instance of torch.nn.Module, the neural model to train
+    :param optimizer: optimizer
+    :param criterion: loss function
+    :param num_epochs: number of epochs
+    :param reshape: how to reshape each batch before training. Must match the expected input shape of `model`
+    :param data: a torch.utils.data.DataLoader, the training set
+    :param print_every: how often should we print training loss
+    :return: a tuple (losses, model, optimizer) with
+        - losses: an array containing the loss at each epoch
+        - model : the trained model
+        - optimizer : optimizer
+    """
     losses = []
     num_samples = len(data)
     if reshape is None:
@@ -41,6 +56,14 @@ def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=Non
     return losses, model, optimizer
 
 def eval(model, data=data.test, reshape=None):
+    """
+    Eval `model` on `data`.
+
+    :param model: a trained torch.nn.Module object
+    :param data: a torch.utils.data.DataLoader
+    :param reshape: optional, a tuple of int. Use it to reshape the data before feeding it to the NN
+    :return: accuracy
+    """
     if reshape is None:
         reshape = DEFAULT_SHAPE
     with torch.no_grad():
