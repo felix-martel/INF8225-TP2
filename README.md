@@ -4,7 +4,7 @@
 ## Usage 
 
 ```
-python main.py [[name] [epochs]]
+python main.py [name [epochs]]
 ```
 
 Par exemple, pour entraîner un CNN à 3 layers sur 10 epochs, lancer :
