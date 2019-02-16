@@ -2,13 +2,13 @@ import matplotlib.pyplot as plt
 from torch.autograd import Variable
 import torch
 
-import data
-from models import cnn
+from data import load
+import models.cnn_2 as cnn
 import params
 import constants
 
 DEFAULT_SHAPE = (-1, constants.im_size)
-params.num_epochs = 10
+data = load()
 
 def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=None, data=data.train, print_every=1000):
     """
@@ -30,6 +30,7 @@ def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=Non
     num_samples = len(data)
     if reshape is None:
         reshape = DEFAULT_SHAPE
+    print(model)
     print("Starting training...")
     for epoch in range(num_epochs):
         for i, (images, labels) in enumerate(data):
@@ -50,7 +51,7 @@ def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=Non
                     num_epochs=num_epochs,
                     iter=i+1,
                     num_iter=num_samples,
-                    loss=loss.data[0]
+                    loss=loss.data.item()
                 ))
     print("Training done.")
     return losses, model, optimizer
@@ -80,11 +81,12 @@ def eval(model, data=data.test, reshape=None):
     print('Test Accuracy of the model on the {} test images: {:.4f}%'.format(total, 100 * correct / total))
     return correct/total
 
-losses, trained_model, _ = train(cnn.model, cnn.optimizer, cnn.criterion, reshape=cnn.reshape)
-test_acc = eval(trained_model, reshape=cnn.reshape)
-losses_cnn_in_epochs = losses[0::600]
+if __name__ == "__main__":
+    losses, trained_model, _ = train(cnn.model, cnn.optimizer, cnn.criterion, reshape=cnn.reshape)
+    test_acc = eval(trained_model, reshape=cnn.reshape)
+    losses_cnn_in_epochs = losses[0::600]
 
-plt.xlabel('Epoch #')
-plt.ylabel('Loss for CNN')
-plt.plot(losses_cnn_in_epochs)
-plt.show()
+    plt.xlabel('Epoch #')
+    plt.ylabel('Loss for CNN')
+    plt.plot(losses_cnn_in_epochs)
+    plt.show()

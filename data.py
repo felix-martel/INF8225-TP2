@@ -35,21 +35,26 @@ deviations = means
 normalize = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize(means, deviations)])
 
-training = FashionMNIST('fashionmnist/', download=True, train=True, transform=normalize)
-testing = FashionMNIST('fashionmnist/', download=True, train=False, transform=normalize)
 
-train_size = len(training)
-val_size = math.floor(params.val_size * train_size)
-train_size = train_size - val_size
+def load(val_size=params.val_size, batch_size=params.batch_size):
+    training = FashionMNIST('fashionmnist/', download=True, train=True, transform=normalize)
+    testing = FashionMNIST('fashionmnist/', download=True, train=False, transform=normalize)
 
-training, validating = random_split(training, [train_size, val_size])
+    train_size = len(training)
+    val_size = math.floor(val_size * train_size)
+    train_size = train_size - val_size
 
-print("# of samples:\nTraining: {}k\nValidation: {}k\nTesting: {}k".format(
-    len(training)//1000,
-    len(validating)//1000,
-    len(testing)//1000)
-)
+    training, validating = random_split(training, [train_size, val_size])
 
-train = DataLoader(training, batch_size=params.batch_size, shuffle=True)
-val = DataLoader(validating, batch_size=params.batch_size, shuffle=True)
-test = DataLoader(testing, batch_size=params.batch_size, shuffle=True)
+    print("# of samples:\nTraining: {}k\nValidation: {}k\nTesting: {}k".format(
+        len(training)//1000,
+        len(validating)//1000,
+        len(testing)//1000)
+    )
+
+    class data:
+        train = DataLoader(training, batch_size=batch_size, shuffle=True)
+        val = DataLoader(validating, batch_size=batch_size, shuffle=True)
+        test = DataLoader(testing, batch_size=batch_size, shuffle=True)
+
+    return data
