@@ -50,3 +50,4 @@ model = CNN_3()
 criterion = nn.CrossEntropyLoss()
 optimizer = Adam(model.parameters(), lr=params.learning_rate)
 reshape = (-1, const.num_channels, const.im_height, const.im_width)
+name = "3-Layer Convolutional Network"

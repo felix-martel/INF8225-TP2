@@ -20,3 +20,4 @@ model = nn.Sequential(
 criterion = nn.NLLLoss()
 optimizer = SGD(model.parameters(), lr=params.learning_rate)
 reshape = None
+name = "Fully-connected Net"

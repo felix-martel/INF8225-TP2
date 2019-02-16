@@ -46,7 +46,7 @@ def load(val_size=params.val_size, batch_size=params.batch_size):
 
     training, validating = random_split(training, [train_size, val_size])
 
-    print("# of samples:\nTraining: {}k\nValidation: {}k\nTesting: {}k".format(
+    print("# Number of samples:\nTraining: {}k\nValidation: {}k\nTesting: {}k\n".format(
         len(training)//1000,
         len(validating)//1000,
         len(testing)//1000)

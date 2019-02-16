@@ -1,13 +1,18 @@
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
 import torch
+import sys
 
 from data import load
-import models.cnn_2 as cnn
+import models.fully_connected as fc
+import models.cnn_1 as cnn_1
+import models.cnn_2 as cnn_2
+import models.cnn_3 as cnn_3
 import params
 import constants
 
 DEFAULT_SHAPE = (-1, constants.im_size)
+DEFAULT_MODEL = "cnn_2"
 data = load()
 
 def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=None, data=data.train, print_every=1000):
@@ -30,8 +35,7 @@ def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=Non
     num_samples = len(data)
     if reshape is None:
         reshape = DEFAULT_SHAPE
-    print(model)
-    print("Starting training...")
+    print("# Training\nStarting training...")
     for epoch in range(num_epochs):
         for i, (images, labels) in enumerate(data):
             images = Variable(images.view(*reshape).float())
@@ -53,7 +57,7 @@ def train(model, optimizer, criterion, num_epochs=params.num_epochs, reshape=Non
                     num_iter=num_samples,
                     loss=loss.data.item()
                 ))
-    print("Training done.")
+    print("Training done.\n")
     return losses, model, optimizer
 
 def eval(model, data=data.test, reshape=None):
@@ -78,12 +82,38 @@ def eval(model, data=data.test, reshape=None):
             total += labels.size(0)
             correct += (predicted == labels).sum()
 
-    print('Test Accuracy of the model on the {} test images: {:.4f}%'.format(total, 100 * correct / total))
+    print('# Eval\nTest Accuracy of the model on the {} test images: {:.4f}%\n'.format(total, 100 * correct / total))
     return correct/total
 
+
+models = {
+    "fc": fc,
+    "cnn_1": cnn_1,
+    "cnn_2": cnn_2,
+    "cnn_3": cnn_3
+}
+
+def load_model(default=DEFAULT_MODEL):
+    if len(sys.argv) > 1 and sys.argv[1] in models:
+        default = sys.argv[1]
+    nn = models[default]
+    print("# Model")
+    print("Using model '{}'".format(nn.name))
+    print(nn.model)
+    print("")
+    return nn
+
+
 if __name__ == "__main__":
-    losses, trained_model, _ = train(cnn.model, cnn.optimizer, cnn.criterion, reshape=cnn.reshape)
-    test_acc = eval(trained_model, reshape=cnn.reshape)
+    nn = load_model()
+
+    try:
+        num_epochs = int(sys.argv[2])
+    except (ValueError, KeyError):
+        num_epochs = params.num_epochs
+
+    losses, trained_model, _ = train(nn.model, nn.optimizer, nn.criterion, reshape=nn.reshape, num_epochs=num_epochs)
+    test_acc = eval(trained_model, reshape=nn.reshape)
     losses_cnn_in_epochs = losses[0::600]
 
     plt.xlabel('Epoch #')
