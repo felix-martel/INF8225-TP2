@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     try:
         num_epochs = int(sys.argv[2])
-    except (ValueError, KeyError):
+    except (ValueError, IndexError, KeyError):
         num_epochs = params.num_epochs
 
     losses, trained_model, _ = train(nn.model, nn.optimizer, nn.criterion, reshape=nn.reshape, num_epochs=num_epochs)
