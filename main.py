@@ -114,6 +114,7 @@ if __name__ == "__main__":
 
     losses, trained_model, _ = train(nn.model, nn.optimizer, nn.criterion, reshape=nn.reshape, num_epochs=num_epochs)
     test_acc = eval(trained_model, reshape=nn.reshape)
+    val_acc = eval(trained_model, data=data.val, reshape=nn.reshape)
     losses_cnn_in_epochs = losses[0::600]
 
     plt.xlabel('Epoch #')
